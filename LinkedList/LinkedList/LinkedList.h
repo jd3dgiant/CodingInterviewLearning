@@ -3,7 +3,7 @@
 // linked type one to the nextItem
 
 // TODO
-// add in inserting functionality
+// simple values should be copied and not pased by pointer.
 // add in more tests in main.cpp
 
 template <typename T>
@@ -121,8 +121,36 @@ class LinkedList {
     }
   }
 
+  bool insertFront(LinkedItemPtr newFrontItem) {
+    if (!newFrontItem) {
+      return false;
+    }
+
+    if (!head) {
+      head = newFrontItem;
+      return true;
+    }
+
+    newFrontItem->nextItem = head;
+    head = newFrontItem;
+    return true;
+  }
+
+  bool insertAfter(LinkedItemPtr prevElement, LinkedItemPtr newFrontItem) {
+    if (!head) { // assuming list is empty if head is never assigned so ignoring prevElement
+      head = newFrontItem;
+      return true;
+    }
+    
+    if (!prevElement) {
+      return false;
+    }
+
+    newFrontItem->nextItem = prevElement->nextItem;
+    prevElement->nextItem = newFrontItem;
+    return true;
+  }
   
-  // TODO maybe this could be tracked as things are added and removed, so a full traversal is not needed
   int Count() {
     if (!head) {
       return 0;
