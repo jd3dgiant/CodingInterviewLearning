@@ -1,43 +1,66 @@
 #include <iostream>
 #include "LinkedList.h"
-int main() {
-  float n1 = 1.0;
-  float n2 = 2.0;
-  float n3 = 3.0;
 
-  LinkedList<float> linkedList;
+void floatLinkedListTest() {
+  LinkedList<float> linkedListFloat;
 
-  float t1 = 5.f;
+  float t1 = 5.0f;
 
   LinkedList<float>::LinkedItemPtr linkedItem1 = new LinkedList<float>::LinkedItem;
-  float x = 1.0f;
-  linkedItem1->data = &x;
+  linkedItem1->data = 1.0f;
 
   LinkedList<float>::LinkedItemPtr linkedItem2 = new LinkedList<float>::LinkedItem;
-  float y = 2.0f;
-  linkedItem2->data = &y;
+  linkedItem2->data = 2.0f;
 
   LinkedList<float>::LinkedItemPtr linkedItem3 = new LinkedList<float>::LinkedItem;
-  float z = 3.0f;
-  linkedItem2->data = &z;
+  linkedItem2->data = 3.0;
 
-  linkedList.add(&t1);
-  linkedList.add(linkedItem1);
-  linkedList.insertFront(linkedItem2);
+  linkedListFloat.add(t1);
+  linkedListFloat.add(linkedItem1);
+  linkedListFloat.insertFront(linkedItem2);
 
-  linkedList.insertAfter(linkedItem1,linkedItem3);
+  linkedListFloat.insertAfter(linkedItem1, linkedItem3);
 
-  std::cout << linkedList.Count() << "\n"; // should print 4
+  std::cout << linkedListFloat.getSize() << "\n"; // should print 4
 
-  linkedList.remove(&t1);
-  linkedList.remove(linkedItem1);
+  linkedListFloat.remove(t1);
+  linkedListFloat.remove(linkedItem1);
 
-  std::cout << linkedList.Count() << "\n"; // should print 2
+  std::cout << linkedListFloat.getSize() << "\n"; // should print 2
 
-  LinkedList<float> linkedList2;
+  linkedListFloat.clearList();
+  linkedListFloat.add(t1);
+}
 
-  linkedList2.insertAfter(nullptr, linkedItem3);
-  linkedList2.insertFront(linkedItem2);
-  std::cout << linkedList2.Count() << "\n"; // should print 2
+void structPointerLinkedListTest() {
+  typedef struct pointerDataTest {
+    int x = 0;
+    int y = 1;
+    int z = 2;
+  } *pointerDataTestPtr;
 
+  LinkedList<pointerDataTest> linkedListDataTest;
+
+
+  pointerDataTest t1 = { 1,2,3 }; // setting member values for x,y,z
+
+  LinkedList<pointerDataTest>::LinkedItemPtr linkedItem1 = new LinkedList<pointerDataTest>::LinkedItem;
+  linkedItem1->data = pointerDataTest{4,5,6};
+
+  LinkedList<pointerDataTest>::LinkedItemPtr linkedItem2 = new LinkedList<pointerDataTest>::LinkedItem;
+  linkedItem1->data = pointerDataTest{ 7,8,9 };
+
+  linkedListDataTest.add(t1);
+  linkedListDataTest.add(linkedItem1);
+  linkedListDataTest.insertFront(linkedItem2);
+
+  std::cout << "Struct Pointer Linked List Test Count: " << linkedListDataTest.getSize() << "\n"; // should print 3  
+}
+
+
+int main() {
+
+  floatLinkedListTest();
+
+  structPointerLinkedListTest();
 }

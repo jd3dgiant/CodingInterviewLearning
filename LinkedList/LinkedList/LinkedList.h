@@ -3,25 +3,23 @@
 // linked type one to the nextItem
 
 // TODO
-// simple values should be copied and not pased by pointer.
 // add in more tests in main.cpp
 
 template <typename T>
 class LinkedList {
  public:
-  LinkedList() : head(nullptr){};
+  LinkedList() : head(nullptr), size(0){};
+  ~LinkedList() {
+    clearList();
+  }
 
   typedef struct LinkedItem {
     LinkedItem* nextItem = nullptr;
-    T* data = nullptr;
+    T data;
   } * LinkedItemPtr;
 
   // add new LinkedItem by data type T
-  bool add(T* newData) {
-    if (!newData) {
-      return false;
-    }
-
+  bool add(T newData) {
     LinkedItemPtr newItemPtr = new LinkedItem;
 
     newItemPtr->data = newData;
@@ -29,6 +27,7 @@ class LinkedList {
 
     if (!head) {
       head = newItemPtr;
+      size++;
       return true;
     }
 
@@ -39,6 +38,7 @@ class LinkedList {
     }
 
     currentTrackedItem->nextItem = newItemPtr;
+    size++;
     return true;
   }
   // add new LinkedItem by created ptr struct
@@ -49,6 +49,7 @@ class LinkedList {
 
     if (!head) {
       head = newItem;
+      size++;
       return true;
     }
 
@@ -59,12 +60,13 @@ class LinkedList {
     }
 
     currentTrackedItem->nextItem = newItem;
+    size++;
     return true;
   }
 
   // remove first instance of matching data type T
-  bool remove(T* removeData) {
-    if (!head || !removeData) {
+  bool remove(T removeData) {
+    if (!head) {
       return false;
     }
 
@@ -73,6 +75,7 @@ class LinkedList {
       head = head->nextItem;
       // delete old head ptr of list and then point it to the
       delete (prevTrackedItem);
+      size--;
       return true;
     }
 
@@ -84,6 +87,7 @@ class LinkedList {
       if (currentTrackedItem->data == removeData) {
         prevTrackedItem->nextItem = currentTrackedItem->nextItem;
         delete (currentTrackedItem);
+        size--;
         return true;
       } else {
         prevTrackedItem = currentTrackedItem;
@@ -103,6 +107,7 @@ class LinkedList {
       head = head->nextItem;
       // delete old head ptr of list and then point it to the
       delete (removeItem);
+      size--;
       return true;
     }
 
@@ -112,9 +117,9 @@ class LinkedList {
       if (currentTrackedItem == removeItem) {
         prevTrackedItem->nextItem = currentTrackedItem->nextItem;
         delete (removeItem);
+        size--;
         return true;
-      }
-      else {
+      } else {
         prevTrackedItem = currentTrackedItem;
         currentTrackedItem = currentTrackedItem->nextItem;
       }
@@ -128,43 +133,55 @@ class LinkedList {
 
     if (!head) {
       head = newFrontItem;
+      size++;
       return true;
     }
 
     newFrontItem->nextItem = head;
     head = newFrontItem;
+    size++;
     return true;
   }
 
-  bool insertAfter(LinkedItemPtr prevElement, LinkedItemPtr newFrontItem) {
-    if (!head) { // assuming list is empty if head is never assigned so ignoring prevElement
-      head = newFrontItem;
-      return true;
-    }
-    
-    if (!prevElement) {
+  bool insertAfter(LinkedItemPtr prevItem, LinkedItemPtr newInsertItem) {
+    if (!prevItem || !newInsertItem) {
       return false;
     }
 
-    newFrontItem->nextItem = prevElement->nextItem;
-    prevElement->nextItem = newFrontItem;
+    if (!head) { // assuming list is empty if head is never assigned so ignoring prevElement
+      head = newInsertItem;
+      size++;
+      return true;
+    }
+
+    newInsertItem->nextItem = prevItem->nextItem;
+    prevItem->nextItem = newInsertItem;
+    size++;
     return true;
   }
-  
-  int Count() {
-    if (!head) {
-      return 0;
+
+  void clearList() {
+    // checking if list is already empty
+    if (head == nullptr) {
+      return;
     }
 
     LinkedItemPtr currentTrackedItem = head;
-    int count = 1;
-    while (currentTrackedItem->nextItem != nullptr) {
-      count++;
-      currentTrackedItem = currentTrackedItem->nextItem;
+    LinkedItemPtr nextTrackedItem = head;
+    while (currentTrackedItem) {
+      nextTrackedItem = currentTrackedItem->nextItem;
+      delete(currentTrackedItem);
+      currentTrackedItem = nextTrackedItem;
     }
-    return count;
+    head = nullptr;
+    size = 0;
+  }
+
+  int getSize() const {
+    return size;
   }
 
  private:
   LinkedItemPtr head;
+  int size;
 };
