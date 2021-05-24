@@ -2,19 +2,50 @@
 //
 
 #include <iostream>
+#include "ReverseWords.h"
 
-int main()
-{
-    std::cout << "Hello World!\n";
+
+void ReverseWordTester(const char *testPhraseChar_, std::string testPhraseStr_, std::string expectedReversePhraseStr_, char delimiter) {
+  std::string reversedPhraseResult = ReverseWords(testPhraseStr_, delimiter);
+
+  std::cout << "Reversed Phrase Result: " << reversedPhraseResult << "\n";
+  std::cout << "Expected Result: " << expectedReversePhraseStr_ << "\n";
+
+  if (reversedPhraseResult == expectedReversePhraseStr_) {
+    // reverse successful
+    std::cout << "Reversed Phrase Match" << "\n";
+  }
+  else {
+    std::cout << "Reverse Phrase Did Not Match" << "\n";
+  }
+
+  // testing char wrapper function
+  std::string reversedCharPhraseResult = ReverseWords(testPhraseChar_, delimiter);
+  if (reversedCharPhraseResult == expectedReversePhraseStr_) {
+    // reverse successful
+    std::cout << "Reversed Char Phrase Match" << "\n";
+  }
+  else {
+    std::cout << "Reverse Char Phrase Did Not Match" << "\n";
+  }
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+int main() {
+  const char *testPhraseChar1 = "Do or do not, there is no try.";
+  std::string testPhraseStr1 = testPhraseChar1;
+  std::string expectedReversePhraseStr1 = "try. no is there not, do or Do";
+  const char delimiter1 = ' ';
+  ReverseWordTester(testPhraseChar1, testPhraseStr1, expectedReversePhraseStr1, delimiter1);
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+  std::cout << "\n";
+
+
+  const char *testPhraseChar2 = "Testing,comma,delimiter,splitting.";
+  std::string testPhraseStr2 = testPhraseChar2;
+  std::string expectedReversePhraseStr2 = "splitting.,delimiter,comma,Testing,";
+  const char delimiter2 = ',';
+
+  ReverseWordTester(testPhraseChar2, testPhraseStr2, expectedReversePhraseStr2, delimiter2);
+
+}
+
