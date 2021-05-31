@@ -1,4 +1,15 @@
 #include "ReverseWords.h"
+// thoughts to improve
+// Scan across the string backwards and track end index of word and the start index of word when finding the delimiter
+// then scan back across that range and write to string buffer itself and then add delimiter. Repeat til start of 
+// string is found and then write that back to the end of buffer without adding delimiter
+
+// Books implementation
+// have a reverse string function that takes in whole str and then start and end index of reversing range
+// reverse everything
+// parse this reverse string going forward and then call reverse function with the start and end index of the word
+// Amend this word to string buffer
+
 // brute force method
 std::string ReverseWords(const std::string& wordsToReverse_, char delimiter) {
   unsigned wordsLength = wordsToReverse_.size();
