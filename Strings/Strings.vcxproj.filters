@@ -21,9 +21,15 @@
     <ClCompile Include="ReverseWords.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TypeConverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReverseWords.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
