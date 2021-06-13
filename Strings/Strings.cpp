@@ -53,7 +53,18 @@ void reverseWordMainCall() {
   ReverseWordTester(testPhraseChar2, testPhraseStr2, expectedReversePhraseStr2, delimiter2);
 }
 
-void convertToIntTest(std::string_view testStr) {
+void convertCharPtrToIntTest(const char* testChar) {
+  auto convertedInt = TypeConverter::ToInt(testChar);
+
+  if (convertedInt) {
+    std::cout << convertedInt.value() << '\n';
+  }
+  else {
+    std::cout << "convertedInt conversion failed to int." << '\n';
+  }
+}
+
+void convertStrToIntTest(std::string_view testStr) {
   auto convertedInt = TypeConverter::ToInt(testStr);
 
   if (convertedInt) {
@@ -61,6 +72,12 @@ void convertToIntTest(std::string_view testStr) {
   } else {
     std::cout << "convertedInt conversion failed to int." << '\n';
   }
+}
+
+void convertToCharPtrTest(int testInt) {
+  char* convertedCharPtr = TypeConverter::ToCharPtr(testInt);
+
+  std::cout << convertedCharPtr << '\n';
 }
 
 void convertToStrTest(int testInt) {
@@ -71,10 +88,20 @@ void convertToStrTest(int testInt) {
 
 // convert string to int and int to string tester
 void convertStringAndIntTesterMainCall() {
-  convertToIntTest("254"); // should print 254
-  convertToIntTest("-6791"); // should print -6791
-  convertToIntTest("0012"); // should print 12
-  convertToIntTest("1b33"); // should print convertedInt conversion failed to int.
+  convertCharPtrToIntTest("254"); // should print 254
+  convertCharPtrToIntTest("-6791"); // should print -6791
+  convertCharPtrToIntTest("0012"); // should print 12
+  convertCharPtrToIntTest("1b33"); // should print convertedInt conversion failed to int.
+
+  convertStrToIntTest("254"); // should print 254
+  convertStrToIntTest("-6791"); // should print -6791
+  convertStrToIntTest("0012"); // should print 12
+  convertStrToIntTest("1b33"); // should print convertedInt conversion failed to int.
+
+  convertToCharPtrTest(45);
+  convertToCharPtrTest(-20);
+  convertToCharPtrTest(5000001);
+  convertToCharPtrTest(551); 
 
   convertToStrTest(45);
   convertToStrTest(-20);

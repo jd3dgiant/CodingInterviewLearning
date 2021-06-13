@@ -2,9 +2,44 @@
 #include <math.h>
 ///
 /// Take a string_view and convert it to integar values
-/// TODO: needs to handle negative numbers
 ///
-std::optional<int> TypeConverter::ToInt(std::string_view stringToConvert) {
+
+// char pointer implementation
+std::optional<int> TypeConverter::ToInt(const char* charArrConvert) {
+  size_t charLength = strlen(charArrConvert); // unsure how to check if null terminated, currently assumed
+  if (charLength == 0) {
+    return std::optional<int>(); // nothing to convert
+  }
+
+  bool isNegative = false;
+  int convertIntVal = 0;
+  int tensMultiplierCount = 1;
+
+  for (int i = charLength - 1; i > -1; i--) {
+    char pos = charArrConvert[i];
+    if (i == 0) { // checking if negative value
+      if (pos == '-') {
+        isNegative = true;
+        continue;
+      }
+    }
+    int val = pos - TypeConverter::LOWESTASCIINUMBERVALUE;
+    if (val >= 0 && val <= 9) {
+      convertIntVal += val * tensMultiplierCount;
+      tensMultiplierCount *= 10;
+    }
+    else {
+      return std::optional<int>(); // not a number was found in string so cannot convert
+    }
+  }
+  if (isNegative) {
+    convertIntVal *= -1;
+  }
+
+  return std::optional<int>(convertIntVal);
+}
+
+std::optional<int> TypeConverter::ToInt(const std::string_view stringToConvert) {
   // go through string right to left and grab individual characters
   int strLength = stringToConvert.length();
   if (strLength == 0) {
@@ -14,8 +49,7 @@ std::optional<int> TypeConverter::ToInt(std::string_view stringToConvert) {
   bool isNegative = false;
   int convertIntVal = 0;
   int tensMultiplierCount = 1;
-  // Derrick: why does this not work when i is size_t as the first test, strLength = 3 so i should
-  // be 2 at begin?
+
   for (int i = strLength - 1; i > -1; i--) {
     char pos = stringToConvert.at(i);
     if (i == 0) { // checking if negative value
@@ -39,10 +73,7 @@ std::optional<int> TypeConverter::ToInt(std::string_view stringToConvert) {
   return std::optional<int>(convertIntVal);
 }
 
-std::string TypeConverter::ToString(int intToConvert) {
-
-  std::string convertedStr = intToConvert < 0 ? "-" : "";
-
+char* TypeConverter::ToCharPtr(int intToConvert) {
   // catching edge case if value to convert is 0 as the while loop later will auto pass and not count properly
   int digitLength = intToConvert == 0 ? 1 : 0;
   int intValue = std::abs(intToConvert);
@@ -52,15 +83,30 @@ std::string TypeConverter::ToString(int intToConvert) {
     digitLength += 1;
   }
 
-  intValue = std::abs(intToConvert); // probably a way to not do this again
+  bool negativeNumber = intToConvert < 0 ? true : false;
+  int buffer = negativeNumber ? digitLength + 2 : digitLength + 1;
+  char* convertedCharArr = (char*) malloc(buffer);
 
-  for (int i = digitLength - 1; i > 0; i--) {
-    int decimalSlide = std::pow(10,i);
-    int singleDigit = intValue / decimalSlide;
-    convertedStr += TypeConverter::LOWESTASCIINUMBERVALUE + singleDigit;
-    intValue -= singleDigit * decimalSlide; // removing leftmost digit
+  if (negativeNumber) {
+    convertedCharArr[0] = '-';
   }
-  convertedStr += TypeConverter::LOWESTASCIINUMBERVALUE + intValue;
 
-  return convertedStr;
+  intValue = std::abs(intToConvert); // probably a way to not do this again
+  int loopStart = negativeNumber ? 1 : 0;
+  int loopEnd = negativeNumber ? digitLength : digitLength - 1;
+
+  for (int i = loopStart; i < loopEnd; i++) {
+    int singleDigit = intValue % 10;
+    convertedCharArr[loopEnd - i + loopStart] = TypeConverter::LOWESTASCIINUMBERVALUE + singleDigit;
+    intValue /= 10; // removing rightmost digit
+  }
+
+  convertedCharArr[loopStart] = TypeConverter::LOWESTASCIINUMBERVALUE + intValue;
+  convertedCharArr[buffer - 1] = '\0';
+
+  return convertedCharArr;
+}
+
+std::string TypeConverter::ToString(int intToConvert) {
+  return std::string(ToCharPtr(intToConvert));
 }
