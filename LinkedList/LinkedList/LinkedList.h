@@ -1,6 +1,6 @@
 #pragma once
 
-// linked type one to the nextItem
+// Single Link List
 
 // TODO
 // add in more tests in main.cpp
@@ -8,59 +8,36 @@
 template <typename T>
 class LinkedList {
  public:
-  LinkedList() : head(nullptr), size(0){};
+  LinkedList() : head(nullptr), tail(nullptr), size(0){};
+  LinkedList(T item) : head(nullptr), tail(nullptr), size(0){
+    head = new LinkedItem{ item, nullptr };
+    tail = head;
+  };
+
   ~LinkedList() {
     clearList();
   }
 
   typedef struct LinkedItem {
-    LinkedItem* nextItem = nullptr;
     T data;
+    LinkedItem* nextItem = nullptr;
   } * LinkedItemPtr;
 
   // add new LinkedItem by data type T
   bool add(T newData) {
-    LinkedItemPtr newItemPtr = new LinkedItem;
-
-    newItemPtr->data = newData;
-    newItemPtr->nextItem = nullptr;
+    LinkedItemPtr newItemPtr = new LinkedItem{ newData, nullptr };
 
     if (!head) {
       head = newItemPtr;
-      size++;
+      tail = head;
+      ++size;
       return true;
     }
 
+    tail->nextItem = newItemPtr;
+    tail = newItemPtr;
     LinkedItemPtr currentTrackedItem = head;
-    // keep traversing the list until the last linked item's nextItem variable pointer is nullptr.
-    while (currentTrackedItem->nextItem != nullptr) {
-      currentTrackedItem = currentTrackedItem->nextItem;
-    }
-
-    currentTrackedItem->nextItem = newItemPtr;
-    size++;
-    return true;
-  }
-  // add new LinkedItem by created ptr struct
-  bool add(LinkedItemPtr newItem) {
-    if (!newItem) {
-      return false;
-    }
-
-    if (!head) {
-      head = newItem;
-      size++;
-      return true;
-    }
-
-    LinkedItemPtr currentTrackedItem = head;
-    // keep traversing the list until the last linked item's nextItem variable pointer is nullptr.
-    while (currentTrackedItem->nextItem != nullptr) {
-      currentTrackedItem = currentTrackedItem->nextItem;
-    }
-
-    currentTrackedItem->nextItem = newItem;
-    size++;
+    ++size;
     return true;
   }
 
@@ -72,6 +49,9 @@ class LinkedList {
 
     LinkedItemPtr prevTrackedItem = head;
     if (head->data == removeData) {
+      if (tail == head) {
+        tail = nullptr;
+      }
       head = head->nextItem;
       // delete old head ptr of list and then point it to the
       delete (prevTrackedItem);
@@ -97,66 +77,36 @@ class LinkedList {
     return false;
   }
 
-  // remove matching struct ptr of LinkedItem
-  bool remove(LinkedItemPtr removeItem) {
-    if (!head || !removeItem) {
-      return false;
-    }
-
-    if (head == removeItem) {
-      head = head->nextItem;
-      // delete old head ptr of list and then point it to the
-      delete (removeItem);
-      size--;
-      return true;
-    }
-
-    LinkedItemPtr prevTrackedItem = head;
-    LinkedItemPtr currentTrackedItem = prevTrackedItem->nextItem;
-    while (currentTrackedItem) {
-      if (currentTrackedItem == removeItem) {
-        prevTrackedItem->nextItem = currentTrackedItem->nextItem;
-        delete (removeItem);
-        size--;
-        return true;
-      } else {
-        prevTrackedItem = currentTrackedItem;
-        currentTrackedItem = currentTrackedItem->nextItem;
-      }
-    }
-  }
-
-  bool insertFront(LinkedItemPtr newFrontItem) {
-    if (!newFrontItem) {
-      return false;
-    }
+  bool insertFront(T newData) {
+    LinkedItemPtr newItemPtr = new LinkedItem{ newData, nullptr };
 
     if (!head) {
-      head = newFrontItem;
-      size++;
+      head = newItemPtr;
+      tail = head;
+      ++size;
       return true;
     }
 
     newFrontItem->nextItem = head;
     head = newFrontItem;
-    size++;
+    ++size;
     return true;
   }
 
-  bool insertAfter(LinkedItemPtr prevItem, LinkedItemPtr newInsertItem) {
+  bool insertAfter(T prevItem, T newData) {
     if (!prevItem || !newInsertItem) {
       return false;
     }
 
     if (!head) { // assuming list is empty if head is never assigned so ignoring prevElement
       head = newInsertItem;
-      size++;
+      ++size;
       return true;
     }
 
     newInsertItem->nextItem = prevItem->nextItem;
     prevItem->nextItem = newInsertItem;
-    size++;
+    ++size;
     return true;
   }
 
@@ -177,11 +127,24 @@ class LinkedList {
     size = 0;
   }
 
-  int getSize() const {
+  const T* front() {
+    return head;
+  }  
+  
+  const T* back() {
+    return tail;
+  }
+
+  size_t getSize() const {
     return size;
+  }
+
+  bool empty() const {
+   return !head;
   }
 
  private:
   LinkedItemPtr head;
-  int size;
+  LinkedItemPtr tail;
+  size_t size;
 };
